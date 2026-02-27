@@ -4,6 +4,13 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>VOD 신청</title>
+  <!-- ============================================================ -->
+  <!-- [설정] 아래 두 값만 수정하세요                                    -->
+  <!-- ============================================================ -->
+  <script>
+    const SUPABASE_URL = 'https://zypcrqomnzazjrgbifah.supabase.co';
+    const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inp5cGNycW9tbnphempyZ2JpZmFoIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzIxNjg5NzYsImV4cCI6MjA4Nzc0NDk3Nn0.t1H87BNp_siKz-dH0zTUwn0ONgszG_JknfwbwTwIUok';
+  </script>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;600;700&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
   <style>
@@ -684,8 +691,8 @@
     // [설정] Supabase 연동 정보 — 배포 전 반드시 수정하세요
     // ============================================================
     const CONFIG = {
-      SUPABASE_URL: 'https://zypcrqomnzazjrgbifah.supabase.co',
-      SUPABASE_ANON_KEY: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inp5cGNycW9tbnphempyZ2JpZmFoIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzIxNjg5NzYsImV4cCI6MjA4Nzc0NDk3Nn0.t1H87BNp_siKz-dH0zTUwn0ONgszG_JknfwbwTwIUok',
+      SUPABASE_URL: SUPABASE_URL,
+      SUPABASE_ANON_KEY: SUPABASE_ANON_KEY,
       // Edge Function 엔드포인트
       API: {
         VERIFY_EMAIL: '/functions/v1/verify-email',
@@ -884,12 +891,12 @@
 
       if (state.vodMethod === 'google_drive') {
         document.getElementById('step4Title').textContent = 'Google 계정 입력';
-        document.getElementById('step4Desc').textContent = 'VOD가 공유될 Google 계정 이메일을 입력해주세요.';
+        document.getElementById('step4Desc').innerHTML = 'VOD를 시청하실 구글 아이디를 적어주세요.<br><span style="color: #EF4444; font-weight: 700;">반드시, 사용하고 계시는 구글 아이디를 넣어주세요.</span>';
         document.getElementById('accountLabel').textContent = 'Google 계정 이메일';
         document.getElementById('accountInput').placeholder = 'example@gmail.com';
       } else {
         document.getElementById('step4Title').textContent = 'Vimeo 계정 입력';
-        document.getElementById('step4Desc').textContent = 'Vimeo에 가입된 이메일을 입력해주세요.';
+        document.getElementById('step4Desc').innerHTML = '<a href="https://vimeo.com/" target="_blank" style="color: #3B82F6; font-weight: 600;">https://vimeo.com/</a> 에서 회원가입을 한 뒤 가입하신 이메일을 적어주세요.';
         document.getElementById('accountLabel').textContent = 'Vimeo 가입 이메일';
         document.getElementById('accountInput').placeholder = 'example@email.com';
       }
