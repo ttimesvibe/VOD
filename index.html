@@ -649,6 +649,28 @@
     </div>
   </div>
 
+  <!-- ======================== -->
+  <!-- STEP 6: 기존 신청 확인/수정 -->
+  <!-- ======================== -->
+  <div class="card hidden" id="step6">
+    <div class="card-title">기존 신청 내역</div>
+    <div class="card-desc">이미 신청하신 내역이 있습니다. 수정하거나 삭제할 수 있습니다.</div>
+
+    <div class="summary-box" style="margin-bottom: 24px;">
+      <div class="summary-row">
+        <span class="summary-label">VOD 수신 방식</span>
+        <span class="summary-value" id="existingMethod"></span>
+      </div>
+      <div class="summary-row">
+        <span class="summary-label">플랫폼 계정</span>
+        <span class="summary-value" id="existingAccount"></span>
+      </div>
+    </div>
+
+    <button class="btn btn-primary" onclick="goToEditMode()" style="margin-bottom: 10px;">신청 정보 수정</button>
+    <button class="btn btn-ghost" onclick="deleteRequest()" style="color: #EF4444;">신청 삭제</button>
+  </div>
+
   <!-- FOOTER -->
   <div class="page-footer">
     문의사항이 있으시면 관리자에게 연락해주세요.
@@ -680,6 +702,7 @@
       email: '',
       vodMethod: '',
       platformAccount: '',
+      isEdit: false,
       countdownTimer: null,
       countdownSeconds: 600, // 10분
     };
@@ -781,7 +804,18 @@
       try {
         await apiCall(CONFIG.API.VERIFY_CODE, { email: state.email, code });
         stopCountdown();
-        goToStep(3);
+
+        // 기존 신청 조회
+        const result = await apiCall(CONFIG.API.SUBMIT_REQUEST, { email: state.email, action: 'get' });
+        if (result.existing) {
+          state.isEdit = true;
+          state.vodMethod = result.existing.vod_method;
+          state.platformAccount = result.existing.platform_account;
+          showExistingRequest(result.existing);
+        } else {
+          state.isEdit = false;
+          goToStep(3);
+        }
       } catch (err) {
         showMsg(msgEl, err.message, 'error');
       } finally {
@@ -860,6 +894,14 @@
         document.getElementById('accountInput').placeholder = 'example@email.com';
       }
 
+      // 수정 모드일 때 기존값 프리필
+      if (state.isEdit && state.platformAccount) {
+        document.getElementById('accountInput').value = state.platformAccount;
+      }
+
+      // 버튼 텍스트 변경
+      document.getElementById('submitText').textContent = state.isEdit ? '수정 완료' : '신청 완료';
+
       goToStep(4);
     }
 
@@ -883,7 +925,7 @@
       setLoading('submitBtn', 'submitText', 'submitSpinner', true);
 
       try {
-        await apiCall(CONFIG.API.SUBMIT_REQUEST, {
+        const result = await apiCall(CONFIG.API.SUBMIT_REQUEST, {
           email: state.email,
           vod_method: state.vodMethod,
           platform_account: account,
@@ -895,11 +937,64 @@
           state.vodMethod === 'google_drive' ? 'Google Drive' : 'Vimeo';
         document.getElementById('summaryAccount').textContent = account;
 
+        // 수정/신규에 따라 완료 메시지 변경
+        if (state.isEdit) {
+          document.querySelector('.complete-title').textContent = '수정이 완료되었습니다!';
+          document.querySelector('.complete-desc').textContent = '변경된 정보로 VOD 접근 권한을 다시 보내드리겠습니다.';
+        } else {
+          document.querySelector('.complete-title').textContent = '신청이 완료되었습니다!';
+          document.querySelector('.complete-desc').textContent = '영업일 기준 1~2일 내에 VOD 접근 권한을 보내드리겠습니다.';
+        }
+
         goToStep(5);
       } catch (err) {
         showMsg(msgEl, err.message, 'error');
       } finally {
         setLoading('submitBtn', 'submitText', 'submitSpinner', false);
+      }
+    }
+
+    // ============================================================
+    // Step 6: 기존 신청 확인/수정/삭제
+    // ============================================================
+    function showExistingRequest(existing) {
+      document.getElementById('existingMethod').textContent = 
+        existing.vod_method === 'google_drive' ? 'Google Drive' : 'Vimeo';
+      document.getElementById('existingAccount').textContent = existing.platform_account;
+
+      // step6 표시 (progress bar는 step2 완료 상태로)
+      for (let i = 1; i <= 6; i++) {
+        const el = document.getElementById(`step${i}`);
+        if (el) el.classList.add('hidden');
+      }
+      document.getElementById('step6').classList.remove('hidden');
+      updateProgress(3);
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    function goToEditMode() {
+      // 기존 값을 미리 선택된 상태로 세팅하고 step3으로
+      state.isEdit = true;
+      goToStep(3);
+      // 기존 선택값 반영
+      if (state.vodMethod) {
+        selectVodMethod(state.vodMethod);
+      }
+    }
+
+    async function deleteRequest() {
+      if (!confirm('정말 신청을 삭제하시겠습니까?')) return;
+
+      try {
+        await apiCall(CONFIG.API.SUBMIT_REQUEST, { email: state.email, action: 'delete' });
+        
+        document.querySelector('.complete-title').textContent = '신청이 삭제되었습니다.';
+        document.querySelector('.complete-desc').textContent = '다시 신청하시려면 페이지에 재접속해주세요.';
+        document.getElementById('summaryMethod').textContent = '-';
+        document.getElementById('summaryAccount').textContent = '-';
+        goToStep(5);
+      } catch (err) {
+        alert(err.message || '삭제에 실패했습니다.');
       }
     }
 
