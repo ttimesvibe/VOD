@@ -579,41 +579,7 @@
   <!-- ======================== -->
   <div class="card hidden" id="step3">
     <div class="card-title">VOD 수신 방식 선택</div>
-    <div class="card-desc">VOD를 어떤 방식으로 받으시겠습니까?</div>
-
-    <!-- ===== 관리자 편집 가능 공지문 영역 ===== -->
-    <!-- 
-      [관리자 안내]
-      아래 notice-content 내부의 HTML을 직접 수정하여 공지문을 편집할 수 있습니다.
-      각 서비스의 가입 방법, 장단점 등을 자유롭게 작성해주세요.
-    -->
-    <div class="notice-box" id="noticeBox">
-      <div class="notice-title">📋 안내사항</div>
-      <div class="notice-content" id="noticeContent">
-        <!-- ============================================ -->
-        <!-- 이 영역을 자유롭게 편집하세요 (HTML 지원)      -->
-        <!-- ============================================ -->
-
-        <h4>📁 Google Drive</h4>
-        <ul>
-          <li>Google 계정이 있으면 별도 가입 없이 이용 가능</li>
-          <li>공유 폴더를 통해 VOD에 접근합니다</li>
-        </ul>
-
-        <h4>🎬 Vimeo</h4>
-        <ul>
-          <li>Vimeo 회원가입이 필요합니다 (무료)</li>
-          <li>비공개 영상 링크로 고화질 스트리밍 제공</li>
-        </ul>
-
-        <p style="margin-top: 12px; font-weight: 600;">※ 선택 후 변경이 어려우니 신중히 선택해주세요.</p>
-
-        <!-- ============================================ -->
-        <!-- 편집 영역 끝                                   -->
-        <!-- ============================================ -->
-      </div>
-    </div>
-    <!-- ===== 공지문 영역 끝 ===== -->
+    <div class="card-desc">[티타임즈] 개발 모르는 직장인을 위한 'AI로 업무 자동화하기' 라이브 실습에 함께해주셔서 감사합니다.<br><br>기존에는 구글 드라이브만을 통해 VOD를 제공해드렸으나, 구글 접속이 불가능한 환경이라는 분들이 계셔서 구글 드라이브 영상 플레이어와 Vimeo 중 선택해 시청하실 수 있게 도와드리고자 합니다.<br><br>둘 중 하나를 선택해 사용하고 계시는 계정을 입력해주세요.</div>
 
     <div class="option-group" id="vodOptions">
       <div class="option-card" onclick="selectVodMethod('google_drive')">
@@ -696,8 +662,8 @@
     // [설정] Supabase 연동 정보 — 배포 전 반드시 수정하세요
     // ============================================================
     const CONFIG = {
-      SUPABASE_URL: 'https://zypcrqomnzazjrgbifah.supabase.co',
-      SUPABASE_ANON_KEY: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Inp5cGNycW9tbnphempyZ2JpZmFoIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzIxNjg5NzYsImV4cCI6MjA4Nzc0NDk3Nn0.t1H87BNp_siKz-dH0zTUwn0ONgszG_JknfwbwTwIUok',
+      SUPABASE_URL: 'https://YOUR_PROJECT.supabase.co',
+      SUPABASE_ANON_KEY: 'YOUR_ANON_KEY',
       // Edge Function 엔드포인트
       API: {
         VERIFY_EMAIL: '/functions/v1/verify-email',
